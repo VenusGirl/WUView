@@ -31,7 +31,7 @@ internal partial class MainViewModel : ObservableObject
     {
         Stopwatch sw = new();
         sw.Start();
-        UpdateSession updateSession = new();
+        IUpdateSession updateSession = new();
         IUpdateSearcher updateSearcher = updateSession.CreateUpdateSearcher();
         int count = updateSearcher.GetTotalHistoryCount();
         _log.Debug($"Read {count} Windows Update records in {sw.Elapsed.TotalMilliseconds:N2} milliseconds");
@@ -41,28 +41,15 @@ internal partial class MainViewModel : ObservableObject
         {
             Stopwatch gkbStopwatch = new();
             Stopwatch updStopwatch = new();
-            int maxUpdates;
-            switch (UserSettings.Setting!.MaxUpdates)
+            var maxUpdates = UserSettings.Setting!.MaxUpdates switch
             {
-                case MaxUpdates.All:
-                    maxUpdates = count;
-                    break;
-                case MaxUpdates.Max50:
-                    maxUpdates = 50;
-                    break;
-                case MaxUpdates.Max100:
-                    maxUpdates = 100;
-                    break;
-                case MaxUpdates.Max250:
-                    maxUpdates = 250;
-                    break;
-                case MaxUpdates.Max500:
-                    maxUpdates = 500;
-                    break;
-                default:
-                    maxUpdates = count;
-                    break;
-            }
+                MaxUpdates.All => count,
+                MaxUpdates.Max50 => 50,
+                MaxUpdates.Max100 => 100,
+                MaxUpdates.Max250 => 250,
+                MaxUpdates.Max500 => 500,
+                _ => count,
+            };
             if (maxUpdates > count)
             {
                 maxUpdates = count;
@@ -265,9 +252,9 @@ internal partial class MainViewModel : ObservableObject
                 }
             }
         }
-        catch (EventLogNotFoundException e)
+        catch (EventLogNotFoundException ex)
         {
-            _log.Error($"Error while reading the event logs\n{e.Message}");
+            _log.Error(ex, $"Error while reading the event logs\n{ex.Message}");
         }
         swe.Stop();
         _log.Debug($"Read {EventLogRecords.Count} Setup event log records in {swe.Elapsed.TotalMilliseconds:N2} milliseconds");

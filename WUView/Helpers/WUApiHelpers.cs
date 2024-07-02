@@ -19,24 +19,33 @@ internal static class WUApiHelpers
 
     private static string GetWUAInfo(string wuaObj)
     {
-        WindowsUpdateAgentInfo updateAgentInfo = new();
-        string value = updateAgentInfo.GetInfo(wuaObj).ToString();
+        IWindowsUpdateAgentInfo updateAgentInfo = new();
+        string value = updateAgentInfo.GetInfo(wuaObj).ToString()!;
         return value ?? string.Empty;
     }
 
-#pragma warning disable S125 // Sections of code should not be commented out
-    // to enable the following, change <EmbedInteropTypes>true</EmbedInteropTypes> to false in .csproj
-
-    //public static bool IsWUEnabled()
-
-                            //{
-                            //    AutomaticUpdatesClass automaticUpdatesClass = new();
-                            //    return automaticUpdatesClass.ServiceEnabled;
-                            //}
-
-    //public static void LogWUEnabled()
-    //{
-    //    _log.Debug($"Windows Update service enabled: {IsWUEnabled()}");
-    //}
+    public static void LogWUEnabled()
+    {
+        string msg = string.Empty;
+        try
+        {
+            IAutomaticUpdates automaticUpdates = new();
+            if (automaticUpdates.ServiceEnabled)
+            {
+                msg = "Windows Update service is enabled.";
+            }
+            else
+            {
+                msg = "Windows Update service is not enabled.";
+            }
+        }
+        catch (Exception ex)
+        {
+            msg = ex.Message;
+        }
+        finally
+        {
+            _log.Debug(msg);
+        }
+    }
 }
-#pragma warning restore S125 // Sections of code should not be commented out
