@@ -3,12 +3,11 @@
 <UserControl x:Class="WUView.Views.SettingsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:config="clr-namespace:WUView.Configuration"
              xmlns:convert="clr-namespace:WUView.Converters"
-             xmlns:local="clr-namespace:WUView.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="clr-namespace:WUView.Models"
              xmlns:viewmodels="clr-namespace:WUView.ViewModels"
              mc:Ignorable="d"
@@ -22,12 +21,8 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <config:UserSettings x:Key="config" />
-        <config:TempSettings x:Key="tempconfig" />
-        <convert:BooleanInverter x:Key="boolInverter" />
-        <convert:LanguageConverter x:Key="langConverter" />
-        <convert:EnumBindingSource x:Key="EnumBindingSource" />
-        <viewmodels:NavigationViewModel x:Key="command" />
+        <convert:BooleanInverter x:Key="BoolInverter" />
+        <viewmodels:NavigationViewModel x:Key="NavVm" />
     </UserControl.Resources>
     <!--#endregion-->
 
@@ -54,12 +49,11 @@
                         Height="69"
                         Padding="20,0"
                         Background="{DynamicResource MaterialDesign.Brush.Background}">
-                    <Button Grid.Row="0"
-                            Width="auto"
+                    <Button Width="auto"
                             Padding="10,0"
                             HorizontalAlignment="Left"
                             Command="{Binding EditExcludeCommand,
-                                              Source={StaticResource command}}"
+                                              Source={StaticResource NavVm}}"
                             Content="{DynamicResource MenuItem_EditExclude}"
                             FontSize="16"
                             Style="{StaticResource PlainOutlinedButton}"
@@ -70,8 +64,8 @@
                 <!--#region Application Settings-->
                 <Expander Grid.Row="2"
                           materialDesign:ExpanderAssist.HorizontalHeaderPadding="10"
-                          IsExpanded="{Binding Setting.AppExpanderOpen,
-                                               Source={StaticResource tempconfig}}">
+                          IsExpanded="{Binding AppExpanderOpen,
+                                               Source={x:Static config:TempSettings.Setting}}">
                     <Expander.Header>
                         <Grid>
                             <!--#region Row definitions-->
@@ -131,13 +125,12 @@
                                    Content="{DynamicResource SettingsItem_NumberOfUpdates}" />
                             <StackPanel Grid.Row="0" Grid.Column="2"
                                         Orientation="Horizontal">
-                                <ComboBox Grid.Row="0" Grid.Column="2"
-                                          Width="Auto" MinWidth="200"
+                                <ComboBox Width="Auto" MinWidth="200"
                                           Margin="0,3,0,0" Padding="2,0,0,3"
                                           HorizontalAlignment="Left"
                                           ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type models:MaxUpdates}}}"
-                                          SelectedItem="{Binding Setting.MaxUpdates,
-                                                                 Source={StaticResource config}}"
+                                          SelectedItem="{Binding MaxUpdates,
+                                                                 Source={x:Static config:UserSettings.Setting}}"
                                           Style="{StaticResource MaterialDesignComboBox}" />
                                 <TextBlock Margin="15,12,0,0"
                                            ToolTipService.InitialShowDelay="300"
@@ -162,8 +155,8 @@
                                       Margin="0,3,0,0" Padding="2,0,0,3"
                                       HorizontalAlignment="Left"
                                       ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type models:DateFormat}}}"
-                                      SelectedIndex="{Binding Setting.DateFormat,
-                                                              Source={StaticResource config}}"
+                                      SelectedIndex="{Binding DateFormat,
+                                                              Source={x:Static config:UserSettings.Setting}}"
                                       Style="{StaticResource MaterialDesignComboBox}" />
                         </Grid>
 
@@ -183,8 +176,8 @@
                             <!--#endregion-->
                             <CheckBox Grid.Row="0"
                                       Padding="10,0"
-                                      IsChecked="{Binding Setting.HideExcluded,
-                                                          Source={StaticResource config}}">
+                                      IsChecked="{Binding HideExcluded,
+                                                          Source={x:Static config:UserSettings.Setting}}">
                                 <TextBlock>
                                     <AccessText Text="{DynamicResource SettingsItem_HideExcluded}"
                                                 TextWrapping="Wrap" />
@@ -192,8 +185,8 @@
                             </CheckBox>
                             <CheckBox Grid.Row="1"
                                       Padding="10,0"
-                                      IsChecked="{Binding Setting.ExcludeKBandResult,
-                                                          Source={StaticResource config}}">
+                                      IsChecked="{Binding ExcludeKBandResult,
+                                                          Source={x:Static config:UserSettings.Setting}}">
                                 <TextBlock>
                                     <AccessText Text="{DynamicResource SettingsItem_ParseAdditional}"
                                                 TextWrapping="Wrap" />
@@ -201,8 +194,8 @@
                             </CheckBox>
                             <CheckBox Grid.Row="2"
                                       Padding="10,0"
-                                      IsChecked="{Binding Setting.ShowDetails,
-                                                          Source={StaticResource config}}">
+                                      IsChecked="{Binding ShowDetails,
+                                                          Source={x:Static config:UserSettings.Setting}}">
                                 <TextBlock>
                                     <AccessText Text="{DynamicResource SettingsItem_ShowDetails}"
                                                 TextWrapping="Wrap" />
@@ -210,8 +203,8 @@
                             </CheckBox>
                             <CheckBox Grid.Row="3"
                                       Padding="10,0"
-                                      IsChecked="{Binding Setting.BoldToday,
-                                                          Source={StaticResource config}}">
+                                      IsChecked="{Binding BoldToday,
+                                                          Source={x:Static config:UserSettings.Setting}}">
                                 <TextBlock>
                                     <AccessText Text="{DynamicResource SettingsItem_ShowTodayInBold}"
                                                 TextWrapping="Wrap" />
@@ -219,8 +212,8 @@
                             </CheckBox>
                             <CheckBox Grid.Row="4"
                                       Padding="10,0"
-                                      IsChecked="{Binding Setting.AutoSelectFirstRow,
-                                                          Source={StaticResource config}}">
+                                      IsChecked="{Binding AutoSelectFirstRow,
+                                                          Source={x:Static config:UserSettings.Setting}}">
                                 <TextBlock>
                                     <AccessText Text="{DynamicResource SettingsItem_SelectFirstRow}"
                                                 TextWrapping="Wrap" />
@@ -228,8 +221,8 @@
                             </CheckBox>
                             <CheckBox Grid.Row="5"
                                       Padding="10,0"
-                                      IsChecked="{Binding Setting.IncludeDebug,
-                                                          Source={StaticResource config}}">
+                                      IsChecked="{Binding IncludeDebug,
+                                                          Source={x:Static config:UserSettings.Setting}}">
                                 <TextBlock>
                                     <AccessText Text="{DynamicResource SettingsItem_IncludeDebug}"
                                                 TextWrapping="Wrap" />
@@ -237,8 +230,8 @@
                             </CheckBox>
                             <CheckBox Grid.Row="6"
                                       Padding="10,0"
-                                      IsChecked="{Binding Setting.ShowLogWarnings,
-                                                          Source={StaticResource config}}">
+                                      IsChecked="{Binding ShowLogWarnings,
+                                                          Source={x:Static config:UserSettings.Setting}}">
                                 <TextBlock>
                                     <AccessText Text="{DynamicResource SettingsItem_ShowLogWarnings}"
                                                 TextWrapping="Wrap" />
@@ -251,11 +244,10 @@
                 <!--#endregion-->
 
                 <!--#region UI Settings-->
-                <Expander x:Name="UIExpander"
-                          Grid.Row="4"
+                <Expander Grid.Row="4"
                           materialDesign:ExpanderAssist.HorizontalHeaderPadding="10"
-                          IsExpanded="{Binding Setting.UIExpanderOpen,
-                                               Source={StaticResource tempconfig}}">
+                          IsExpanded="{Binding UIExpanderOpen,
+                                               Source={x:Static config:TempSettings.Setting}}">
                     <Expander.Header>
                         <Grid>
                             <!--#region Row definitions-->
@@ -305,6 +297,7 @@
                                 <RowDefinition Height="38" />
                                 <RowDefinition Height="38" />
                                 <RowDefinition Height="38" />
+                                <RowDefinition Height="38" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" MinWidth="100" />
@@ -320,47 +313,58 @@
                                       Margin="0,3,0,0" Padding="2,0,0,3"
                                       HorizontalAlignment="Left"
                                       ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type models:ThemeType}}}"
-                                      SelectedItem="{Binding Path=Setting.UITheme,
-                                                             Source={StaticResource config}}"
+                                      SelectedItem="{Binding Path=UITheme,
+                                                             Source={x:Static config:UserSettings.Setting}}"
                                       Style="{StaticResource MaterialDesignComboBox}" />
 
                             <Label Grid.Row="1" Grid.Column="0"
                                    VerticalAlignment="Center"
                                    Content="{DynamicResource SettingsItem_UISize}" />
-                            <ComboBox x:Name="cbxSize"
-                                      Grid.Row="1" Grid.Column="2"
+                            <ComboBox Grid.Row="1" Grid.Column="2"
                                       Width="Auto" MinWidth="200"
                                       Margin="0,3,0,0" Padding="2,0,0,3"
                                       HorizontalAlignment="Left"
                                       ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type models:MySize}}}"
-                                      SelectedItem="{Binding Setting.UISize,
-                                                             Source={StaticResource config}}"
+                                      SelectedItem="{Binding UISize,
+                                                             Source={x:Static config:UserSettings.Setting}}"
                                       Style="{StaticResource MaterialDesignComboBox}" />
 
                             <Label Grid.Row="2" Grid.Column="0"
                                    VerticalAlignment="Center"
                                    Content="{DynamicResource SettingsItem_AccentColor}" />
-                            <ComboBox x:Name="cbxColor"
-                                      Grid.Row="2" Grid.Column="2"
+                            <ComboBox Grid.Row="2" Grid.Column="2"
                                       Width="Auto" MinWidth="200"
                                       Margin="0,3,0,0" Padding="2,0,0,3"
                                       HorizontalAlignment="Left"
                                       ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type models:AccentColor}}}"
                                       MaxDropDownHeight="300"
-                                      SelectedItem="{Binding Setting.PrimaryColor,
-                                                             Source={StaticResource config}}"
+                                      SelectedItem="{Binding PrimaryColor,
+                                                             Source={x:Static config:UserSettings.Setting}}"
                                       Style="{StaticResource MaterialDesignComboBox}" />
 
                             <Label Grid.Row="3" Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Content="{DynamicResource SettingsItem_DisplayFont}" />
+                            <ComboBox Grid.Row="3" Grid.Column="2"
+                                  Width="Auto" MinWidth="200"
+                                  Margin="0,3,0,0" Padding="3,0,0,3"
+                                  HorizontalAlignment="Left"
+                                  ItemsSource="{Binding FontList}"
+                                  SelectedValue="{Binding SelectedFont,
+                                                          Source={x:Static config:UserSettings.Setting}}"
+                                  SelectedValuePath="Source"
+                                  Style="{StaticResource MaterialDesignComboBox}" />
+
+                            <Label Grid.Row="4" Grid.Column="0"
                                    VerticalAlignment="Center"
                                    Content="{DynamicResource SettingsItem_RowHeight}" />
-                            <ComboBox Grid.Row="3" Grid.Column="2"
+                            <ComboBox Grid.Row="4" Grid.Column="2"
                                       Width="Auto" MinWidth="200"
                                       Margin="0,3,0,0" Padding="2,0,0,3"
                                       HorizontalAlignment="Left"
                                       ItemsSource="{Binding Source={convert:EnumBindingSource {x:Type models:Spacing}}}"
-                                      SelectedItem="{Binding Setting.RowSpacing,
-                                                             Source={StaticResource config}}"
+                                      SelectedItem="{Binding RowSpacing,
+                                                             Source={x:Static config:UserSettings.Setting}}"
                                       Style="{StaticResource MaterialDesignComboBox}" />
                         </Grid>
                         <!--#endregion-->
@@ -406,11 +410,10 @@
                 <!--#endregion-->
 
                 <!--#region Language-->
-                <Expander x:Name="LangExpander"
+                <Expander Grid.Row="6"
                           materialDesign:ExpanderAssist.HorizontalHeaderPadding="10"
-                          Grid.Row="6"
-                          IsExpanded="{Binding Setting.LangExpanderOpen,
-                                               Source={StaticResource tempconfig}}">
+                          IsExpanded="{Binding LangExpanderOpen,
+                                               Source={x:Static config:TempSettings.Setting}}">
                     <Expander.Header>
                         <Grid>
                             <!--#region Row definitions-->
@@ -461,8 +464,7 @@
 
                         <StackPanel Grid.Row="0" Grid.Column="1"
                                     Orientation="Horizontal">
-                            <CheckBox Grid.Row="0" Grid.Column="1"
-                                      Padding="10,0"
+                            <CheckBox Padding="10,0"
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource SettingsItem_UseOSLanguageCheckBox}"
                                       IsChecked="{Binding UseOSLanguage,
@@ -483,6 +485,7 @@
                         </StackPanel>
 
                         <Grid Grid.Row="1" Grid.Column="1">
+                            <!--#region Column definitions -->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="10" />
@@ -490,31 +493,32 @@
                                 <ColumnDefinition Width="30" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
+                            <!--#endregion-->
                             <Label Grid.Row="0" Grid.Column="0"
                                    VerticalAlignment="Center"
                                    Content="{DynamicResource SettingsItem_Language}" />
-                            <ComboBox x:Name="cbxLanguage"
-                                      Grid.Row="1" Grid.Column="2"
+                            <ComboBox Grid.Column="2"
                                       Width="Auto" MinWidth="200"
                                       Margin="0,3,0,0" Padding="2,0,0,3"
                                       HorizontalAlignment="Left"
-                                      IsEnabled="{Binding Path=Setting.UseOSLanguage,
-                                                          Source={StaticResource config},
-                                                          Converter={StaticResource boolInverter}}"
+                                      IsEnabled="{Binding Path=UseOSLanguage,
+                                                          Source={x:Static config:UserSettings.Setting},
+                                                          Converter={StaticResource BoolInverter}}"
                                       ItemsSource="{Binding DefinedLanguages}"
-                                      Loaded="CbxLanguage_Loaded"
-                                      SelectedItem="{Binding Path=Setting.UILanguage,
-                                                             Source={StaticResource config},
-                                                             Converter={StaticResource langConverter}}"
+                                      SelectedValue="{Binding Path=UILanguage,
+                                                              Source={x:Static config:UserSettings.Setting}}"
+                                      SelectedValuePath="LanguageCode"
                                       Style="{StaticResource MaterialDesignComboBox}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
+                                            <!--#region Column definitions -->
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto" />
                                                 <ColumnDefinition Width="15" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
+                                            <!--#endregion-->
                                             <TextBlock Grid.Column="0"
                                                        Text="{Binding LanguageNative}" />
                                             <TextBlock Grid.Column="2"
@@ -524,7 +528,7 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <TextBlock Grid.Row="1" Grid.Column="4"
+                            <TextBlock Grid.Column="4"
                                        VerticalAlignment="Center"
                                        FontSize="13" Opacity=".8">
                                 <Run Text="{Binding CurrentLanguageStringCount}" />
@@ -541,18 +545,17 @@
                                    TextWrapping="Wrap" />
 
                         <Rectangle Grid.Row="3" Grid.Column="1"
+                                   Height="2"
                                    Margin="0,5,60,10"
                                    HorizontalAlignment="Stretch"
-                                   Fill="{DynamicResource MaterialDesign.Brush.TextBox.HoverBackground}"
-                                   Height="2"/>
+                                   Fill="{DynamicResource MaterialDesign.Brush.TextBox.HoverBackground}" />
 
                         <StackPanel Grid.Row="4" Grid.Column="1"
                                     Orientation="Horizontal">
                             <StackPanel.DataContext>
                                 <viewmodels:SettingsViewModel />
                             </StackPanel.DataContext>
-                            <CheckBox Grid.Row="0" Grid.Column="1"
-                                      Padding="10,0"
+                            <CheckBox Padding="10,0"
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource SettingsItem_EnableLanguageTesting}"
                                       IsChecked="{Binding LanguageTesting,

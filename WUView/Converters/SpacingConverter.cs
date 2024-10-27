@@ -6,19 +6,27 @@ namespace WUView.Converters;
 /// Converter that changes Spacing to Thickness
 /// </summary>
 /// <seealso cref="System.Windows.Data.IValueConverter" />
-internal class SpacingConverter : IValueConverter
+internal sealed class SpacingConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return UserSettings.Setting!.RowSpacing switch
+        if (value is Spacing spacing)
         {
-            Spacing.Compact => new Thickness(15, 2, 15, 1),
-            Spacing.Comfortable => new Thickness(15, 4, 15, 3),
-            _ => (object)new Thickness(15, 8, 15, 7),
-        };
+            switch (spacing)
+            {
+                case Spacing.Compact:
+                    return new Thickness(15, 2, 15, 2);
+                case Spacing.Comfortable:
+                    return new Thickness(15, 5, 15, 5);
+                case Spacing.Wide:
+                    return new Thickness(15, 7, 15, 7);
+            }
+        }
+
+        return new Thickness(15, 10, 15, 10);
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return Binding.DoNothing;
     }

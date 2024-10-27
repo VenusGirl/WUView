@@ -6,9 +6,9 @@ namespace WUView.Converters;
 /// Sets the desired of updates.
 /// </summary>
 /// <seealso cref="System.Windows.Data.IValueConverter" />
-internal class ItemsSourceConverter : IValueConverter
+internal sealed class ItemsSourceConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         int fullCount = MainViewModel.UpdatesFullList.Count;
         int withoutCount = MainViewModel.UpdatesWithoutExcludedItems.Count;
@@ -17,8 +17,8 @@ internal class ItemsSourceConverter : IValueConverter
         {
             if (MainPage.Instance is not null)
             {
-                SnackbarMsg.ClearAndQueueMessage(string.Format(
-                    GetStringResource("MsgText_DisplayedUpdates"), withoutCount, fullCount));
+                SnackbarMsg.ClearAndQueueMessage(string.Format(CultureInfo.InvariantCulture,
+                    MsgTextDisplayedUpdates, withoutCount, fullCount));
             }
             return MainViewModel.UpdatesWithoutExcludedItems;
         }
@@ -26,14 +26,14 @@ internal class ItemsSourceConverter : IValueConverter
         {
             if (MainPage.Instance is not null)
             {
-                SnackbarMsg.ClearAndQueueMessage(string.Format(
-                    GetStringResource("MsgText_DisplayedAllUpdates"), fullCount));
+                SnackbarMsg.ClearAndQueueMessage(string.Format(CultureInfo.InvariantCulture,
+                    MsgTextDisplayedAllUpdates, fullCount));
             }
             return MainViewModel.UpdatesFullList;
         }
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return Binding.DoNothing;
     }

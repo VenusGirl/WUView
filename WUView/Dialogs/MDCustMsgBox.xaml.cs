@@ -10,7 +10,7 @@ namespace WUView.Dialogs;
 public partial class MDCustMsgBox : Window
 {
     #region Public Property
-    public static CustResultType CustResult { get; set; }
+    public static CustResultType CustResult { get; private set; }
     #endregion
 
     /// <summary>
@@ -43,50 +43,43 @@ public partial class MDCustMsgBox : Window
         #endregion
 
         #region Message text
-        txtMessage.Text = Message;
+        TxtMessage.Text = Message;
         #endregion Message text
 
         #region Message box title
-        if (string.IsNullOrEmpty(Title))
-        {
-            txtTitle.Text = Application.Current.MainWindow.Title;
-        }
-        else
-        {
-            txtTitle.Text = Title;
-        }
+        TxtTitle.Text = string.IsNullOrEmpty(Title) ? Application.Current.MainWindow!.Title : Title;
         #endregion Message box title
 
         #region Button visibility
         switch (Buttons)
         {
             case ButtonType.Ok:
-                btnCancel.Visibility = Visibility.Collapsed;
-                btnYes.Visibility = Visibility.Collapsed;
-                btnNo.Visibility = Visibility.Collapsed;
-                _ = btnOk.Focus();
+                BtnCancel.Visibility = Visibility.Collapsed;
+                BtnYes.Visibility = Visibility.Collapsed;
+                BtnNo.Visibility = Visibility.Collapsed;
+                _ = BtnOk.Focus();
                 break;
 
             case ButtonType.OkCancel:
-                btnYes.Visibility = Visibility.Collapsed;
-                btnNo.Visibility = Visibility.Collapsed;
-                _ = btnOk.Focus();
+                BtnYes.Visibility = Visibility.Collapsed;
+                BtnNo.Visibility = Visibility.Collapsed;
+                _ = BtnOk.Focus();
                 break;
 
             case ButtonType.YesNo:
-                btnOk.Visibility = Visibility.Collapsed;
-                btnCancel.Visibility = Visibility.Collapsed;
-                _ = btnYes.Focus();
+                BtnOk.Visibility = Visibility.Collapsed;
+                BtnCancel.Visibility = Visibility.Collapsed;
+                _ = BtnYes.Focus();
                 break;
 
             case ButtonType.YesNoCancel:
-                btnOk.Visibility = Visibility.Collapsed;
-                _ = btnYes.Focus();
+                BtnOk.Visibility = Visibility.Collapsed;
+                _ = BtnYes.Focus();
                 break;
         }
         if (HideClose)
         {
-            btnClose.Visibility = Visibility.Collapsed;
+            BtnClose.Visibility = Visibility.Collapsed;
         }
         #endregion Button visibility
 
@@ -94,14 +87,7 @@ public partial class MDCustMsgBox : Window
         if (MsgBoxOwner != null)
         {
             Owner = MsgBoxOwner;
-            if (Owner.IsVisible)
-            {
-                WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            }
-            else
-            {
-                WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            }
+            WindowStartupLocation = Owner.IsVisible ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen;
         }
         else
         {
@@ -112,10 +98,10 @@ public partial class MDCustMsgBox : Window
         #region Error message
         if (IsError)
         {
-            BorderBrush = System.Windows.Media.Brushes.OrangeRed;
+            BorderBrush = Brushes.OrangeRed;
             BorderThickness = new Thickness(2);
-            cardHeader.Background = BorderBrush;
-            cardHeader.FontWeight = FontWeights.Bold;
+            CardHeader.Background = BorderBrush;
+            CardHeader.FontWeight = FontWeights.Bold;
         }
         #endregion Error message
     }
@@ -129,28 +115,28 @@ public partial class MDCustMsgBox : Window
 
     #region Button commands
     [RelayCommand]
-    internal void CancelButton()
+    private void CancelButton()
     {
         Close();
         CustResult = CustResultType.Cancel;
     }
 
     [RelayCommand]
-    internal void OKButton()
+    private void OKButton()
     {
         Close();
         CustResult = CustResultType.Ok;
     }
 
     [RelayCommand]
-    internal void YesButton()
+    private void YesButton()
     {
         Close();
         CustResult = CustResultType.Yes;
     }
 
     [RelayCommand]
-    internal void NoButton()
+    private void NoButton()
     {
         Close();
         CustResult = CustResultType.No;

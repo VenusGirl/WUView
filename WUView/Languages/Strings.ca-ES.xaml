@@ -15,7 +15,7 @@
 
         Translation contributed by:  @Timthreetwelve & Google Translate
 
-        Date last update:            2023/12/06
+        Date last update:            2024/10/20
 
         ======================================================================
     -->
@@ -45,6 +45,7 @@
     <sys:String x:Key="About_Version">Versió</sys:String>
     <!--  Button Text  -->
     <sys:String x:Key="Button_Cancel">Cancel·lar</sys:String>
+    <sys:String x:Key="Button_CheckUpdate">Comprova si hi ha actualitzacions</sys:String>
     <sys:String x:Key="Button_Close">Tanca aquest menú</sys:String>
     <sys:String x:Key="Button_No">No</sys:String>
     <sys:String x:Key="Button_OK">D'acord</sys:String>
@@ -99,6 +100,7 @@
     <sys:String x:Key="MsgText_ApplicationStarting">està en marxa</sys:String>
     <sys:String x:Key="MsgText_AppUpdateCheckFailed">No s'ha pogut comprovar l'actualització.</sys:String>
     <sys:String x:Key="MsgText_AppUpdateChecking">S'està comprovant l'actualització.</sys:String>
+    <sys:String x:Key="MsgText_AppUpdateClose">Si feu clic a "Sí", es tancarà el visor de Windows Update.</sys:String>
     <sys:String x:Key="MsgText_AppUpdateGoToRelease">Vols anar a la pàgina de llançament?</sys:String>
     <sys:String x:Key="MsgText_AppUpdateNewerFound">S'ha trobat una versió més recent ({0}).</sys:String>
     <sys:String x:Key="MsgText_AppUpdateNoneFound">No s'han trobat versions més recents.</sys:String>
@@ -109,6 +111,9 @@
     <sys:String x:Key="MsgText_DisplayedUpdates">Es mostren {0} de {1} actualitzacions</sys:String>
     <sys:String x:Key="MsgText_ElapsedTime">Temps transcorregut</sys:String>
     <sys:String x:Key="MsgText_Error_TestLanguage">Hi ha un problema amb el fitxer d'idioma.</sys:String>
+    <sys:String x:Key="MsgText_ErrorCaption">ERROR</sys:String>
+    <sys:String x:Key="MsgText_ErrorOpeningFile">S'ha produït un error en obrir {0}</sys:String>
+    <sys:String x:Key="MsgText_ErrorReadingFile">S'ha produït un error en llegir {0}</sys:String>
     <sys:String x:Key="MsgText_EventLogNA">No s'han trobat registres d'esdeveniments per a aquesta actualització.</sys:String>
     <sys:String x:Key="MsgText_EventLogNoRecords">No s'ha trobat cap registre d'esdeveniments que contingui "{0}".</sys:String>
     <sys:String x:Key="MsgText_ExcludingContaining">S'exclouen les actualitzacions que continguin:</sys:String>
@@ -140,7 +145,7 @@
     <sys:String x:Key="ResultCode_Failed">Fracassat</sys:String>
     <sys:String x:Key="ResultCode_InProgress">En curs</sys:String>
     <sys:String x:Key="ResultCode_NotStarted">No iniciat</sys:String>
-    <sys:String x:Key="ResultCode_ResultCode_Aborted">Aborted</sys:String>
+    <sys:String x:Key="ResultCode_Aborted">Aborted</sys:String>
     <sys:String x:Key="ResultCode_Succeeded">Succeït</sys:String>
     <sys:String x:Key="ResultCode_SucceededWithErrors">S'ha encertat amb errors</sys:String>
     <!--  Settings Page Expander Headings  -->
@@ -154,6 +159,7 @@
     <sys:String x:Key="SettingsItem_AccentColor">Color d'accent</sys:String>
     <sys:String x:Key="SettingsItem_ChangingLanguageWarning">Si canvieu d'idioma, l'aplicació es reiniciarà!</sys:String>
     <sys:String x:Key="SettingsItem_DateFormat">Format de data de quadrícula</sys:String>
+    <sys:String x:Key="SettingsItem_DisplayFont">Tipus de lletra</sys:String>
     <sys:String x:Key="SettingsItem_EditExcludeToolTip">Maj+Feu clic per obrir el fitxer amb l'aplicació predeterminada</sys:String>
     <sys:String x:Key="SettingsItem_EnableLanguageTesting">Habilitar les proves d'idioma</sys:String>
     <sys:String x:Key="SettingsItem_HideExcluded">Amaga els elements exclosos</sys:String>
@@ -255,7 +261,7 @@
     <!-- U | ResultCode_Failed -->
     <!-- U | ResultCode_InProgress -->
     <!-- U | ResultCode_NotStarted -->
-    <!-- U | ResultCode_ResultCode_Aborted -->
+    <!-- U | ResultCode_Aborted -->
     <!-- U | ResultCode_Succeeded -->
     <!-- U | ResultCode_SucceededWithErrors -->
     <!-- U | SettingsItem_EnableLanguageTesting -->

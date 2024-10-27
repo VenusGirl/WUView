@@ -11,47 +11,49 @@ public partial class App : Application
     /// <summary>
     /// Number of language strings in a resource dictionary
     /// </summary>
-    public static int LanguageStrings { get; set; }
+    public static int LanguageStrings { get; private set; }
 
     /// <summary>
-    /// Uri of the resource dictionary
-    /// </summary>
     /// Number of language strings in the test resource dictionary
     /// </summary>
-    public static int TestLanguageStrings { get; set; }
+    private static int TestLanguageStrings { get; set; }
 
     /// <summary>
     /// Uri of the resource dictionary
     /// </summary>
-    public static string? LanguageFile { get; set; }
+    private static string? LanguageFile { get; set; }
 
     /// <summary>
     /// Uri of the test resource dictionary
     /// </summary>
-    public static string? TestLanguageFile { get; set; }
+    private static string? TestLanguageFile { get; set; }
 
     /// <summary>
     /// Culture at startup
     /// </summary>
-    public static CultureInfo? StartupCulture { get; set; }
+    private static CultureInfo? StartupCulture { get; set; }
 
     /// <summary>
     /// UI Culture at startup
     /// </summary>
-    public static CultureInfo? StartupUICulture { get; set; }
+    private static CultureInfo? StartupUICulture { get; set; }
 
     /// <summary>
     /// Number of language strings in the default resource dictionary
     /// </summary>
-    public static int DefaultLanguageStrings { get; set; }
+    public static int DefaultLanguageStrings { get; private set; }
     #endregion Properties
 
+    #region On startup event
     /// <summary>
     /// Override the Startup Event.
     /// </summary>
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Unhandled exception handler
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
         // Only allows a single instance of the application to run.
         SingleInstance.Create(AppInfo.AppName);
@@ -62,6 +64,17 @@ public partial class App : Application
         // Log startup messages
         MainWindowHelpers.LogStartup();
 
+        // Change language if needed.
+        SetLanguage();
+
+        // Enable language testing if requested.
+        CheckLanguageTesting();
+    }
+    #endregion On startup event
+
+    #region Set the UI language
+    private void SetLanguage()
+    {
         // Resource dictionary for language
         ResourceDictionary resDict = [];
 
@@ -122,8 +135,12 @@ public partial class App : Application
             LanguageFile = "defaulted";
             _log.Warn($"Language has defaulted to en-US. {LanguageStrings} string loaded.");
         }
+    }
+    #endregion Set the UI language
 
-        // Language testing
+    #region Language testing
+    private void CheckLanguageTesting()
+    {
         if (UserSettings.Setting!.LanguageTesting)
         {
             _log.Info("Language testing enabled");
@@ -145,9 +162,10 @@ public partial class App : Application
                 catch (Exception ex)
                 {
                     _log.Error(ex, $"Error loading test language file {TestLanguageFile}");
-                    string msg = string.Format($"{GetStringResource("MsgText_Error_TestLanguage")}\n\n{ex.Message}\n\n{ex.InnerException}");
-                    MessageBox.Show(msg,
-                        "Windows Update Viewer ERROR",
+                    string msg = string.Format(CultureInfo.CurrentCulture,
+                                               $"{GetStringResource("MsgText_Error_TestLanguage")}\n\n{ex.Message}\n\n{ex.InnerException}");
+                    _ = MessageBox.Show(msg,
+                        GetStringResource("MsgText_ErrorCaption"),
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                 }
@@ -158,4 +176,30 @@ public partial class App : Application
             }
         }
     }
+    #endregion Language testing
+
+    #region Unhandled Exception Handler
+    /// <summary>
+    /// Handles any exceptions that weren't caught by a try-catch statement.
+    /// </summary>
+    /// <remarks>
+    /// This uses default message box.
+    /// </remarks>
+    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
+    {
+        _log.Error("Unhandled Exception");
+        Exception e = (Exception)args.ExceptionObject;
+        _log.Error(e.Message);
+        if (e.InnerException != null)
+        {
+            _log.Error(e.InnerException.ToString());
+        }
+        _log.Error(e.StackTrace);
+
+        _ = MessageBox.Show($"An error has occurred.\n{e.Message}\n\nSee the log file. ",
+            GetStringResource("MsgText_ErrorCaption"),
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+    }
+    #endregion Unhandled Exception Handler
 }

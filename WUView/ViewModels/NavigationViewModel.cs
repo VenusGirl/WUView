@@ -27,45 +27,44 @@ public partial class NavigationViewModel : ObservableObject
     #endregion Properties
 
     #region List of navigation items
-    public static List<NavigationItem> NavigationViewModelTypes { get; set; } = new List<NavigationItem>
-        (
-            [
-                new NavigationItem
-                {
-                    Name = ResourceHelpers.GetStringResource("NavItem_Updates"),
-                    NavPage = NavPage.Viewer,
-                    ViewModelType = typeof(MainViewModel),
-                    IconKind = PackIconKind.ViewList,
-                    PageTitle = ResourceHelpers.GetStringResource("NavTitle_Updates")
-                },
-                 new NavigationItem
-                {
-                    Name = ResourceHelpers.GetStringResource("NavItem_Settings"),
-                    NavPage = NavPage.Settings,
-                    ViewModelType = typeof(SettingsViewModel),
-                    IconKind = PackIconKind.SettingsOutline,
-                    PageTitle = ResourceHelpers.GetStringResource("NavTitle_Settings")
-                },
-                new NavigationItem
-                {
-                    Name = ResourceHelpers.GetStringResource("NavItem_About"),
-                    NavPage = NavPage.About,
-                    ViewModelType = typeof(AboutViewModel),
-                    IconKind = PackIconKind.AboutCircleOutline,
-                    PageTitle = ResourceHelpers.GetStringResource("NavTitle_About")
-                },
-                new NavigationItem
-                {
-                    Name = ResourceHelpers.GetStringResource("NavItem_Exit"),
-                    IconKind = PackIconKind.ExitToApp,
-                    IsExit = true
-                }
-            ]
-        );
+    public static List<NavigationItem> NavigationViewModelTypes { get; set; } =
+    [
+        new ()
+        {
+            Name = GetStringResource("NavItem_Updates"),
+            NavPage = NavPage.Viewer,
+            ViewModelType = typeof(MainViewModel),
+            IconKind = PackIconKind.ViewList,
+            PageTitle = GetStringResource("NavTitle_Updates")
+        },
+            new ()
+        {
+            Name = GetStringResource("NavItem_Settings"),
+            NavPage = NavPage.Settings,
+            ViewModelType = typeof(SettingsViewModel),
+            IconKind = PackIconKind.SettingsOutline,
+            PageTitle = GetStringResource("NavTitle_Settings")
+        },
+        new ()
+        {
+            Name = GetStringResource("NavItem_About"),
+            NavPage = NavPage.About,
+            ViewModelType = typeof(AboutViewModel),
+            IconKind = PackIconKind.AboutCircleOutline,
+            PageTitle = GetStringResource("NavTitle_About")
+        },
+        new ()
+        {
+            Name = GetStringResource("NavItem_Exit"),
+            IconKind = PackIconKind.ExitToApp,
+            IsExit = true
+        }
+    ];
+
     #endregion List of navigation items
 
     #region Navigation Methods
-    public void NavigateToPage(NavPage page)
+    private void NavigateToPage(NavPage page)
     {
         Navigate(FindNavPage(page));
     }
@@ -81,7 +80,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Navigate Command
     [RelayCommand]
-    internal void Navigate(object param)
+    private void Navigate(object param)
     {
         if (param is NavigationItem item)
         {
@@ -101,7 +100,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Edit the exclude file
     [RelayCommand]
-    public static void EditExclude()
+    private static void EditExclude()
     {
         if (Keyboard.Modifiers == ModifierKeys.Shift)
         {
@@ -116,7 +115,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Open the About page
     [RelayCommand]
-    public void OpenAbout()
+    private void OpenAbout()
     {
         NavigateToPage(NavPage.About);
     }
@@ -124,7 +123,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Open the Settings page
     [RelayCommand]
-    public void OpenSettings()
+    private void OpenSettings()
     {
         NavigateToPage(NavPage.Settings);
     }
@@ -132,7 +131,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region View log file
     [RelayCommand]
-    public static void ViewLogFile()
+    private static void ViewLogFile()
     {
         SnackbarMsg.ClearAndQueueMessage(GetStringResource("MsgText_OpeningLogFile"), 2000);
         TextFileViewer.ViewTextFile(GetLogfileName()!);
@@ -141,7 +140,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region View readme file
     [RelayCommand]
-    public static void ViewReadMeFile()
+    private static void ViewReadMeFile()
     {
         SnackbarMsg.ClearAndQueueMessage(GetStringResource("MsgText_OpeningReadMeFile"), 2000);
         TextFileViewer.ViewTextFile(Path.Combine(AppInfo.AppDirectory, "readme.txt"));
@@ -150,15 +149,16 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Toggle details
     [RelayCommand]
-    public static void ToggleDetails()
+    private static void ToggleDetails()
     {
         UserSettings.Setting!.ShowDetails = !UserSettings.Setting.ShowDetails;
+        MainPage.Instance!.SetDetailsHeight();
     }
     #endregion Toggle details
 
     #region Toggle excluded
     [RelayCommand]
-    public static void ToggleExcluded()
+    private static void ToggleExcluded()
     {
         UserSettings.Setting!.HideExcluded = !UserSettings.Setting.HideExcluded;
         MainPage.Instance!.FilterTheGrid(true);
@@ -167,7 +167,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Remove column sort
     [RelayCommand]
-    public static void RemoveSort()
+    private static void RemoveSort()
     {
         MainPage.Instance!.ClearColumnSort();
     }
@@ -175,21 +175,21 @@ public partial class NavigationViewModel : ObservableObject
 
     #region UI Smaller and Larger
     [RelayCommand]
-    public static void UILarger()
+    private static void UILarger()
     {
-        MainWindowUIHelpers.EverythingLarger();
+        MainWindowHelpers.EverythingLarger();
     }
 
     [RelayCommand]
-    public static void UISmaller()
+    private static void UISmaller()
     {
-        MainWindowUIHelpers.EverythingSmaller();
+        MainWindowHelpers.EverythingSmaller();
     }
     #endregion UI Smaller and Larger
 
     #region Application Shutdown
     [RelayCommand]
-    public static void Exit()
+    private static void Exit()
     {
         Application.Current.Shutdown();
     }
@@ -197,7 +197,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Launch Windows Update
     [RelayCommand]
-    public static void OpenWindowsUpdate()
+    private static void OpenWindowsUpdate()
     {
         SnackbarMsg.ClearAndQueueMessage(GetStringResource("MsgText_OpeningWindowsUpdate"));
         using Process procWU = new();
@@ -209,7 +209,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Save as JSON file
     [RelayCommand]
-    public static async Task SaveJson()
+    private static async Task SaveJson()
     {
         await FileHelpers.SaveAsJson();
     }
@@ -217,7 +217,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Save to CSV file
     [RelayCommand]
-    public static async Task SaveCSV()
+    private static async Task SaveCSV()
     {
         await FileHelpers.SaveToCSV();
     }
@@ -225,7 +225,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Save details to text file
     [RelayCommand]
-    public static async Task SaveText()
+    private static async Task SaveText()
     {
         await FileHelpers.SaveToFile();
     }
@@ -233,7 +233,7 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Copy to clipboard
     [RelayCommand]
-    internal static void CopyClipboard()
+    private static void CopyClipboard()
     {
         MainPage.Instance!.Copy2Clipboard(true);
     }
@@ -241,11 +241,23 @@ public partial class NavigationViewModel : ObservableObject
 
     #region Check for new release
     [RelayCommand]
-    public static async Task CheckReleaseAsync()
+    private static async Task CheckReleaseAsync()
     {
         await GitHubHelpers.CheckRelease();
     }
     #endregion Check for new release
+
+    #region Open the app folder
+    [RelayCommand]
+    private static void OpenAppFolder()
+    {
+        using Process process = new();
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.FileName = "Explorer.exe";
+        process.StartInfo.Arguments = AppInfo.AppDirectory;
+        _ = process.Start();
+    }
+    #endregion Open the app folder
 
     #endregion Relay Commands
 
@@ -253,84 +265,92 @@ public partial class NavigationViewModel : ObservableObject
     /// <summary>
     /// Keyboard events
     /// </summary>
-    public void KeyDown(object sender, KeyEventArgs e)
+    [RelayCommand]
+    private void KeyDown(KeyEventArgs e)
     {
         #region Keys without modifiers
-        if (e.Key == Key.F1)
+        if (e.KeyboardDevice.Modifiers == ModifierKeys.None)
         {
-            _mainWindow!.NavigationListBox.SelectedValue = FindNavPage(NavPage.About);
-        }
-        if (e.Key == Key.F5)
-        {
-            MainPage.RefreshAll();
-        }
-        if (e.Key == Key.Escape)
-        {
-            if (CurrentViewModel!.GetType() == typeof(MainViewModel))
+            switch (e.Key)
             {
-                MainPage.Instance!.tbxSearch.Clear();
+                case Key.F1:
+                    _mainWindow!.NavigationListBox.SelectedValue = FindNavPage(NavPage.About);
+                    break;
+                case Key.F5:
+                    MainPage.RefreshAll();
+                    break;
+                case Key.Escape:
+                    {
+                        if (CurrentViewModel is MainViewModel)
+                        {
+                            MainPage.Instance!.TbxSearch.Clear();
+                        }
+                        e.Handled = true;
+                        break;
+                    }
             }
-            e.Handled = true;
         }
         #endregion Keys without modifiers
 
         #region Keys with Ctrl
         if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
         {
-            if (e.Key == Key.OemComma)
+            switch (e.Key)
             {
-                _mainWindow!.NavigationListBox.SelectedValue = FindNavPage(NavPage.Settings);
-            }
-            if (e.Key == Key.U)
-            {
-                _mainWindow!.NavigationListBox.SelectedValue = FindNavPage(NavPage.Viewer);
-            }
-            if (e.Key == Key.L)
-            {
-                _ = MainViewModel.EditExcludes();
-            }
-            if (e.Key == Key.D)
-            {
-                UserSettings.Setting!.ShowDetails = !UserSettings.Setting.ShowDetails;
-            }
-            if (e.Key == Key.E)
-            {
-                ToggleExcluded();
-            }
-            if (e.Key == Key.F)
-            {
-                MainPage.Instance!.tbxSearch.Focus();
-            }
-            if (e.Key == Key.R)
-            {
-                MainPage.Instance!.ClearColumnSort();
-            }
-            if (e.Key == Key.T)
-            {
-                if (UserSettings.Setting!.DateFormat >= 9)
-                {
-                    UserSettings.Setting!.DateFormat = 0;
-                }
-                else
-                {
-                    UserSettings.Setting.DateFormat++;
-                }
-                MainPage.Instance!.UpdateGrid();
-                SnackbarMsg.ClearAndQueueMessage(GetStringResource("MsgText_DateFormatChange"), 2000);
-            }
-            if (e.Key == Key.Add || e.Key == Key.OemPlus)
-            {
-                MainWindowUIHelpers.EverythingLarger();
-                string size = EnumDescConverter.GetEnumDescription(UserSettings.Setting!.UISize);
-                string message = string.Format(GetStringResource("MsgText_UISizeSet"), size);
-                SnackbarMsg.ClearAndQueueMessage(message, 2000);
-            }
-            if (e.Key == Key.Subtract || e.Key == Key.OemMinus)
-            {
-                MainWindowUIHelpers.EverythingSmaller();
-                string size = EnumDescConverter.GetEnumDescription(UserSettings.Setting!.UISize);
-                string message = string.Format(GetStringResource("MsgText_UISizeSet"), size);
-                SnackbarMsg.ClearAndQueueMessage(message, 2000);
+                case Key.OemComma:
+                    _mainWindow!.NavigationListBox.SelectedValue = FindNavPage(NavPage.Settings);
+                    break;
+                case Key.U:
+                    _mainWindow!.NavigationListBox.SelectedValue = FindNavPage(NavPage.Viewer);
+                    break;
+                case Key.L:
+                    _ = MainViewModel.EditExcludes();
+                    break;
+                case Key.D:
+                    UserSettings.Setting!.ShowDetails = !UserSettings.Setting.ShowDetails;
+                    MainPage.Instance!.SetDetailsHeight();
+                    break;
+                case Key.E:
+                    ToggleExcluded();
+                    break;
+                case Key.F:
+                    MainPage.Instance!.TbxSearch.Focus();
+                    break;
+                case Key.R:
+                    MainPage.Instance!.ClearColumnSort();
+                    break;
+                case Key.T:
+                    {
+                        if (UserSettings.Setting!.DateFormat >= 9)
+                        {
+                            UserSettings.Setting.DateFormat = 0;
+                        }
+                        else
+                        {
+                            UserSettings.Setting.DateFormat++;
+                        }
+                        MainPage.Instance!.UpdateGrid();
+                        SnackbarMsg.ClearAndQueueMessage(GetStringResource("MsgText_DateFormatChange"), 2000);
+                        break;
+                    }
+                case Key.Add:
+                case Key.OemPlus:
+                    {
+                        MainWindowHelpers.EverythingLarger();
+                        string size = EnumDescConverter.GetEnumDescription(UserSettings.Setting!.UISize);
+                        string message = string.Format(CultureInfo.InvariantCulture, MsgTextUISizeSet, size);
+                        SnackbarMsg.ClearAndQueueMessage(message, 2000);
+                        break;
+                    }
+                case Key.Subtract:
+                case Key.OemMinus:
+                    {
+                        MainWindowHelpers.EverythingSmaller();
+                        string size = EnumDescConverter.GetEnumDescription(UserSettings.Setting!.UISize);
+                        string message = string.Format(CultureInfo.InvariantCulture, MsgTextUISizeSet, size);
+                        SnackbarMsg.ClearAndQueueMessage(message, 2000);
+                        break;
+                    }
             }
         }
         #endregion Keys with Ctrl
@@ -338,60 +358,70 @@ public partial class NavigationViewModel : ObservableObject
         #region Keys with Ctrl and Shift
         if (e.KeyboardDevice.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
         {
-            if (e.Key == Key.T)
+            switch (e.Key)
             {
-                switch (UserSettings.Setting!.UITheme)
-                {
-                    case ThemeType.Light:
-                        UserSettings.Setting.UITheme = ThemeType.Dark;
+                case Key.T:
+                    {
+                        switch (UserSettings.Setting!.UITheme)
+                        {
+                            case ThemeType.Light:
+                                UserSettings.Setting.UITheme = ThemeType.Dark;
+                                break;
+                            case ThemeType.Dark:
+                                UserSettings.Setting.UITheme = ThemeType.Darker;
+                                break;
+                            case ThemeType.Darker:
+                                UserSettings.Setting.UITheme = ThemeType.System;
+                                break;
+                            case ThemeType.System:
+                                UserSettings.Setting.UITheme = ThemeType.Light;
+                                break;
+                        }
+                        string theme = EnumDescConverter.GetEnumDescription(UserSettings.Setting.UITheme);
+                        string message = string.Format(CultureInfo.InvariantCulture, MsgTextUIThemeSet, theme);
+                        SnackbarMsg.ClearAndQueueMessage(message, 2000);
                         break;
-                    case ThemeType.Dark:
-                        UserSettings.Setting.UITheme = ThemeType.Darker;
+                    }
+                case Key.C:
+                    {
+                        if (UserSettings.Setting!.PrimaryColor >= AccentColor.White)
+                        {
+                            UserSettings.Setting.PrimaryColor = AccentColor.Red;
+                        }
+                        else
+                        {
+                            UserSettings.Setting.PrimaryColor++;
+                        }
+                        string color = EnumDescConverter.GetEnumDescription(UserSettings.Setting.PrimaryColor);
+                        string message = string.Format(CultureInfo.InvariantCulture, MsgTextUIColorSet, color);
+                        SnackbarMsg.ClearAndQueueMessage(message, 2000);
                         break;
-                    case ThemeType.Darker:
-                        UserSettings.Setting.UITheme = ThemeType.System;
+                    }
+                case Key.F:
+                    {
+                        using Process p = new();
+                        p.StartInfo.FileName = AppInfo.AppDirectory;
+                        p.StartInfo.UseShellExecute = true;
+                        p.StartInfo.ErrorDialog = false;
+                        _ = p.Start();
                         break;
-                    case ThemeType.System:
-                        UserSettings.Setting.UITheme = ThemeType.Light;
-                        break;
-                }
-                string theme = EnumDescConverter.GetEnumDescription(UserSettings.Setting.UITheme);
-                string message = string.Format(GetStringResource("MsgText_UIThemeSet"), theme);
-                SnackbarMsg.ClearAndQueueMessage(message, 2000);
-            }
-            if (e.Key == Key.C)
-            {
-                if (UserSettings.Setting!.PrimaryColor >= AccentColor.White)
-                {
-                    UserSettings.Setting.PrimaryColor = AccentColor.Red;
-                }
-                else
-                {
-                    UserSettings.Setting.PrimaryColor++;
-                }
-                string color = EnumDescConverter.GetEnumDescription(UserSettings.Setting.PrimaryColor);
-                string message = string.Format(GetStringResource("MsgText_UIColorSet"), color);
-                SnackbarMsg.ClearAndQueueMessage(message, 2000);
-            }
-            if (e.Key == Key.F)
-            {
-                using Process p = new();
-                p.StartInfo.FileName = AppInfo.AppDirectory;
-                p.StartInfo.UseShellExecute = true;
-                p.StartInfo.ErrorDialog = false;
-                _ = p.Start();
-            }
-            if (e.Key == Key.K)
-            {
-                CompareLanguageDictionaries();
-                ViewLogFile();
-            }
-            if (e.Key == Key.S)
-            {
-                TextFileViewer.ViewTextFile(ConfigHelpers.SettingsFileName);
+                    }
+                case Key.K:
+                    CompareLanguageDictionaries();
+                    ViewLogFile();
+                    break;
+                case Key.R when UserSettings.Setting?.RowSpacing >= Spacing.Wide:
+                    UserSettings.Setting.RowSpacing = Spacing.Compact;
+                    break;
+                case Key.R:
+                    UserSettings.Setting!.RowSpacing++;
+                    break;
+                case Key.S:
+                    TextFileViewer.ViewTextFile(ConfigHelpers.SettingsFileName);
+                    break;
             }
         }
-        #endregion
+        #endregion Keys with Ctrl and Shift
     }
     #endregion Key down events
 }

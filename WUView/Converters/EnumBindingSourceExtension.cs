@@ -1,4 +1,4 @@
-﻿// Copyright (c) Tim Kennedy. All Rights Reserved. Licensed under the MIT License.
+// Copyright (c) Tim Kennedy. All Rights Reserved. Licensed under the MIT License.
 #nullable disable
 namespace WUView.Converters;
 
@@ -9,12 +9,11 @@ namespace WUView.Converters;
 /// Based on https://brianlagunas.com/a-better-way-to-data-bind-enums-in-wpf/
 /// </remarks>
 /// <seealso cref="System.Windows.Markup.MarkupExtension" />
-internal class EnumBindingSourceExtension : MarkupExtension
+internal sealed class EnumBindingSourceExtension : MarkupExtension
 {
     private Type _enumType;
     public Type EnumType
     {
-        get { return _enumType; }
         set
         {
             if (value != _enumType)
@@ -30,8 +29,6 @@ internal class EnumBindingSourceExtension : MarkupExtension
             }
         }
     }
-
-    public EnumBindingSourceExtension() { }
 
     public EnumBindingSourceExtension(Type enumType)
     {

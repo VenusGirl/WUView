@@ -2,12 +2,12 @@
 
 namespace WUView.ViewModels;
 
-internal partial class MainViewModel : ObservableObject
+internal sealed class MainViewModel : ObservableObject
 {
     #region Event record and WUpdate Lists
-    public static List<EventRecord> EventLogRecords { get; set; } = [];
-    public static ObservableCollection<WUpdate> UpdatesFullList { get; set; } = [];
-    public static ObservableCollection<WUpdate> UpdatesWithoutExcludedItems { get; set; } = [];
+    private static List<EventRecord> EventLogRecords { get; } = [];
+    public static ObservableCollection<WUpdate> UpdatesFullList { get; } = [];
+    public static ObservableCollection<WUpdate> UpdatesWithoutExcludedItems { get; } = [];
     #endregion Event record and WUpdate Lists
 
     #region Kick off the process of gathering the information
@@ -20,6 +20,10 @@ internal partial class MainViewModel : ObservableObject
         PopulateExcludedList();
         Mouse.OverrideCursor = null;
         DisplayCount();
+        if (UserSettings.Setting!.AutoSelectFirstRow && MainPage.Instance!.DataGrid.Items.Count > 0)
+        {
+            MainPage.Instance.DataGrid.SelectedIndex = 0;
+        }
     }
     #endregion Kick off the process of gathering the information
 
@@ -27,7 +31,7 @@ internal partial class MainViewModel : ObservableObject
     /// <summary>
     /// Gets list of Windows Updates
     /// </summary>
-    public static void GetListOfUpdates()
+    private static void GetListOfUpdates()
     {
         Stopwatch sw = new();
         sw.Start();
@@ -58,20 +62,20 @@ internal partial class MainViewModel : ObservableObject
             foreach (IUpdateHistoryEntry hist in updateSearcher.QueryHistory(0, maxUpdates))
             {
                 gkbStopwatch.Start();
-                string kbNum = GetKB(hist.Title!);
+                string kbNum = GetKB(hist.Title);
                 gkbStopwatch.Stop();
                 updStopwatch.Start();
                 try
                 {
                     WUpdate update = new()
                     {
-                        Title = hist.Title ?? "null",
+                        Title = hist.Title,
                         KBNum = kbNum,
                         Date = hist.Date.ToLocalTime(),
                         ResultCode = ResultCodeHelper.TranslateResultCode(hist.ResultCode),
-                        HResult = hist.HResult.ToString(),
+                        HResult = hist.HResult.ToString(CultureInfo.InvariantCulture),
                         Operation = OperationHelper.TranslateOperation(hist.Operation),
-                        UpdateID = hist.UpdateIdentity.UpdateID ?? string.Empty,
+                        UpdateID = hist.UpdateIdentity.UpdateID,
                         Description = hist.Description ?? string.Empty,
                         SupportURL = hist.SupportUrl ?? string.Empty,
                         ELDescription = FindEventLogs(kbNum)
@@ -81,7 +85,7 @@ internal partial class MainViewModel : ObservableObject
                     if (hist.HResult != 0 && UserSettings.Setting.ShowLogWarnings)
                     {
                         string operation = update.Operation.Replace("uo", "");
-                        string HResultHex = string.Format($"0x{int.Parse(update.HResult):X8}");
+                        string HResultHex = string.Format(CultureInfo.InvariantCulture, $"0x{int.Parse(update.HResult, CultureInfo.InvariantCulture):X8}");
                         _log.Warn($"KB: {update.KBNum,-10} Date: {update.Date,-23} HResult: {HResultHex,-10} " +
                                  $" Operation: {operation,-12}  UpdateID: {update.UpdateID}");
                     }
@@ -100,11 +104,7 @@ internal partial class MainViewModel : ObservableObject
             _log.Info($"No updates found! IUpdateSearcher.GetTotalHistoryCount returned {count}.");
             new MDCustMsgBox(GetStringResource("MsgText_NoUpdatesFound"),
                     "Windows Update Viewer",
-                    ButtonType.Ok,
-                    false,
-                    true,
-                    null,
-                    false).Show();
+                    ButtonType.Ok).Show();
         }
         _log.Debug($"Building the list of updates took {sw.Elapsed.TotalMilliseconds:N2} milliseconds");
     }
@@ -116,7 +116,7 @@ internal partial class MainViewModel : ObservableObject
     /// </summary>
     /// <param name="title">Update title</param>
     /// <returns>Returns either the KB number or n/a</returns>
-    private static string GetKB(string title)
+    private static string GetKB(string? title)
     {
         if (title == null)
         {
@@ -124,7 +124,7 @@ internal partial class MainViewModel : ObservableObject
             return "n/a";
         }
         title = title.Replace("(", "").Replace(")", "");
-        int pos = title.IndexOf("KB");
+        int pos = title.IndexOf("KB", StringComparison.InvariantCulture);
         if (pos > -1)
         {
             int endPosition = title.IndexOf(' ', pos);
@@ -153,13 +153,13 @@ internal partial class MainViewModel : ObservableObject
         StringBuilder sbEventLog = new();
         foreach (EventRecord? item in EventLogRecords.Where(item => item.Properties[0].Value.ToString()!.Contains(kb)))
         {
-            string tc = string.Format($"{item.TimeCreated} - {item.FormatDescription()}  Event ID: {item.Id}.");
+            string tc = string.Format(CultureInfo.InvariantCulture, $"{item.TimeCreated} - {item.FormatDescription()}  Event ID: {item.Id}.");
             _ = sbEventLog.AppendLine(tc);
         }
 
         if (sbEventLog.Length == 0)
         {
-            string message = string.Format(GetStringResource("MsgText_EventLogNoRecords"), kb);
+            string message = string.Format(CultureInfo.InvariantCulture, MsgTextEventLogNoRecords, kb);
             _ = sbEventLog.AppendLine(message);
         }
         return sbEventLog.ToString();
@@ -170,7 +170,7 @@ internal partial class MainViewModel : ObservableObject
     /// <summary>
     /// Creates a List that doesn't include any records on the exclude list
     /// </summary>
-    public static void PopulateExcludedList()
+    private static void PopulateExcludedList()
     {
         Stopwatch esw = new();
         esw.Start();
@@ -224,8 +224,7 @@ internal partial class MainViewModel : ObservableObject
                 ButtonType.Ok,
                 false,
                 true,
-                Application.Current.MainWindow,
-                false).Show();
+                Application.Current.MainWindow).Show();
         }
     }
     #endregion Remove excluded items and create list without excludes
@@ -234,7 +233,7 @@ internal partial class MainViewModel : ObservableObject
     /// <summary>
     /// Gets all "Setup" records from the Event Log
     /// </summary>
-    public static void GetEventLog()
+    private static void GetEventLog()
     {
         Stopwatch swe = new();
         swe.Start();
@@ -292,11 +291,11 @@ internal partial class MainViewModel : ObservableObject
     /// <summary>
     /// Displays the count of updates in a snack bar message
     /// </summary>
-    internal static void DisplayCount()
+    private static void DisplayCount()
     {
         int total = UpdatesFullList.Count;
-        int displayed = MainPage.Instance!.dataGrid.Items.Count;
-        string message = string.Format(GetStringResource("MsgText_DisplayedUpdates"), displayed, total);
+        int displayed = MainPage.Instance!.DataGrid.Items.Count;
+        string message = string.Format(CultureInfo.InvariantCulture, MsgTextDisplayedUpdates, displayed, total);
         SnackbarMsg.ClearAndQueueMessage(message);
     }
     #endregion Display update count

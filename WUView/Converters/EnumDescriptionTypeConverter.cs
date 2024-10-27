@@ -8,7 +8,7 @@ namespace WUView.Converters;
 /// <remarks>
 ///  Based on https://brianlagunas.com/localize-enum-descriptions-in-wpf/
 /// </remarks>
-internal class EnumDescriptionTypeConverter(Type type) : EnumConverter(type)
+internal sealed class EnumDescriptionTypeConverter(Type type) : EnumConverter(type)
 {
     public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
     {
@@ -16,7 +16,7 @@ internal class EnumDescriptionTypeConverter(Type type) : EnumConverter(type)
         {
             if (value != null)
             {
-                FieldInfo fi = value.GetType().GetField(value.ToString());
+                FieldInfo fi = value.GetType().GetField(value.ToString()!);
                 if (fi != null)
                 {
                     DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);

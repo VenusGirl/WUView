@@ -42,7 +42,7 @@ internal static class GitHubHelpers
 
             if (tag.StartsWith("v", StringComparison.InvariantCultureIgnoreCase))
             {
-                tag = tag.ToLower().TrimStart('v');
+                tag = tag.ToLower(CultureInfo.InvariantCulture).TrimStart('v');
             }
 
             Version latestVersion = new(tag);
@@ -58,13 +58,12 @@ internal static class GitHubHelpers
                     ButtonType.Ok,
                     false,
                     true,
-                    _mainWindow,
-                    false).ShowDialog();
+                    _mainWindow).ShowDialog();
             }
             else
             {
                 _log.Debug($"A newer release ({latestVersion}) has been found.");
-                string msg = string.Format(GetStringResource("MsgText_AppUpdateNewerFound"), latestVersion);
+                string msg = string.Format(CultureInfo.InvariantCulture, MsgTextAppUpdateNewerFound, latestVersion);
                 _ = new MDCustMsgBox($"{msg}\n\n" +
                                             $"{GetStringResource("MsgText_AppUpdateGoToRelease")}\n\n" +
                                             $"{GetStringResource("MsgText_AppUpdateClose")}",
@@ -72,8 +71,7 @@ internal static class GitHubHelpers
                     ButtonType.YesNo,
                     false,
                     true,
-                    _mainWindow,
-                    false).ShowDialog();
+                    _mainWindow).ShowDialog();
 
                 if (MDCustMsgBox.CustResult == CustResultType.Yes)
                 {
@@ -103,7 +101,7 @@ internal static class GitHubHelpers
     /// <param name="repoOwner">The repository owner.</param>
     /// <param name="repoName">Name of the repository.</param>
     /// <returns>Release object</returns>
-    internal static async Task<Release> GetLatestReleaseAsync(string repoOwner, string repoName)
+    private static async Task<Release> GetLatestReleaseAsync(string repoOwner, string repoName)
     {
         try
         {
@@ -124,7 +122,7 @@ internal static class GitHubHelpers
     /// <summary>
     /// Display a message box stating that the release check failed.
     /// </summary>
-    internal static void CheckFailed()
+    private static void CheckFailed()
     {
         _ = new MDCustMsgBox(GetStringResource("MsgText_AppUpdateCheckFailed"),
             "Windows Update Viewer",

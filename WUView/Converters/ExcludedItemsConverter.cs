@@ -6,11 +6,11 @@ namespace WUView.Converters;
 /// Converts excluded items in the observable collection to strings for use in a textbox
 /// </summary>
 /// <seealso cref="System.Windows.Data.IValueConverter" />
-internal class ExcludedItemsConverter : IValueConverter
+internal sealed class ExcludedItemsConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value != null)
+        if (value is not null)
         {
             StringBuilder sb = new();
             foreach (ExcludedItems item in (ObservableCollection<ExcludedItems>)value)
@@ -22,13 +22,12 @@ internal class ExcludedItemsConverter : IValueConverter
         return string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not null)
         {
-            string[] items = value.ToString()!.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             ObservableCollection<ExcludedItems> excludedItems = [];
-            foreach (string item in items)
+            foreach (string item in value.ToString()!.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
             {
                 ExcludedItems excluded = new()
                 {

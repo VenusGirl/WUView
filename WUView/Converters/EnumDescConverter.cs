@@ -8,7 +8,7 @@ namespace WUView.Converters;
 /// <remarks>
 /// Allows use of "Light Blue" instead of LightBlue or Light_Blue.
 /// </remarks>
-internal class EnumDescConverter : IValueConverter
+internal abstract class EnumDescConverter : IValueConverter
 {
     /// <summary>
     /// Converts a value.
@@ -20,18 +20,14 @@ internal class EnumDescConverter : IValueConverter
     /// <returns>
     /// A converted value. If the method returns <see langword="null" />, the valid null value is used.
     /// </returns>
-    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not Enum myEnum)
         {
             return null;
         }
         string description = GetEnumDescription(myEnum);
-        if (!string.IsNullOrEmpty(description))
-        {
-            return description;
-        }
-        return myEnum.ToString();
+        return !string.IsNullOrEmpty(description) ? description : myEnum.ToString();
     }
 
     /// <summary>
@@ -41,10 +37,6 @@ internal class EnumDescConverter : IValueConverter
     /// <returns>The description</returns>
     public static string GetEnumDescription(Enum enumObj)
     {
-        if (enumObj == null)
-        {
-            return string.Empty;
-        }
         FieldInfo? field = enumObj.GetType().GetField(enumObj.ToString());
         object[] attrArray = field!.GetCustomAttributes(false);
 
@@ -62,7 +54,7 @@ internal class EnumDescConverter : IValueConverter
     /// <summary>
     /// Not used.
     /// </summary>
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         return string.Empty;
     }

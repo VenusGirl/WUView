@@ -10,7 +10,4 @@ updates:
     directory: "/WUView"
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 25
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+    open-pull-requests-limit: 5

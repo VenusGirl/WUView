@@ -15,7 +15,7 @@
 
         Translation contributed by:  @Timthreetwelve & Google Translate
 
-        Date LAST UPDATE:            2023/11/06
+        Date LAST UPDATE:            2024/10/20
 
         ========================================================================
 
@@ -46,6 +46,7 @@
     <sys:String x:Key="About_Version">Version</sys:String>
     <!--  Button Text  -->
     <sys:String x:Key="Button_Cancel">Annuler</sys:String>
+    <sys:String x:Key="Button_CheckUpdate">Vérifier mise à jour</sys:String>
     <sys:String x:Key="Button_Close">Fermer le menu</sys:String>
     <sys:String x:Key="Button_OK">D'accord</sys:String>
     <sys:String x:Key="Button_OpenLogFile">Afficher le fichier journal</sys:String>
@@ -100,6 +101,7 @@
     <sys:String x:Key="MsgText_ApplicationStarting">est en train de démarrer</sys:String>
     <sys:String x:Key="MsgText_AppUpdateCheckFailed">La vérification de la mise à jour a échoué.</sys:String>
     <sys:String x:Key="MsgText_AppUpdateChecking">Vérification de la mise à jour.</sys:String>
+    <sys:String x:Key="MsgText_AppUpdateClose">Cliquez sur « Oui » pour fermer le Windows Update Viewer.</sys:String>
     <sys:String x:Key="MsgText_AppUpdateGoToRelease">Voulez-vous accéder à la page de publication?</sys:String>
     <sys:String x:Key="MsgText_AppUpdateNewerFound">Une version plus récente ({0}) a été trouvée.</sys:String>
     <sys:String x:Key="MsgText_AppUpdateNoneFound">Aucune version plus récente n'a été trouvée.</sys:String>
@@ -110,6 +112,9 @@
     <sys:String x:Key="MsgText_DisplayedUpdates">Affichage de {0} des {1} mises à jour</sys:String>
     <sys:String x:Key="MsgText_ElapsedTime">Temps écoulé</sys:String>
     <sys:String x:Key="MsgText_Error_TestLanguage">Il y a un problème avec le fichier de langue.</sys:String>
+    <sys:String x:Key="MsgText_ErrorCaption">ERREUR</sys:String>
+    <sys:String x:Key="MsgText_ErrorOpeningFile">Erreur lors de l'ouverture de {0}</sys:String>
+    <sys:String x:Key="MsgText_ErrorReadingFile">Erreur lors de la lecture de {0}</sys:String>
     <sys:String x:Key="MsgText_EventLogNA">Aucun enregistrement de journaux d'événements n'a été trouvé pour cette mise à jour.</sys:String>
     <sys:String x:Key="MsgText_EventLogNoRecords">Aucun enregistrement du journal des événements contenant «{0}» n'a été trouvé.</sys:String>
     <sys:String x:Key="MsgText_ExcludingContaining">Hors mises à jour contenant:</sys:String>
@@ -141,7 +146,7 @@
     <sys:String x:Key="ResultCode_Failed">Échoué</sys:String>
     <sys:String x:Key="ResultCode_InProgress">En cours</sys:String>
     <sys:String x:Key="ResultCode_NotStarted">Pas commencé</sys:String>
-    <sys:String x:Key="ResultCode_ResultCode_Aborted">Avorté</sys:String>
+    <sys:String x:Key="ResultCode_Aborted">Avorté</sys:String>
     <sys:String x:Key="ResultCode_Succeeded">Réussi</sys:String>
     <sys:String x:Key="ResultCode_SucceededWithErrors">Réussi avec des erreurs</sys:String>
     <!--  Settings Page Expander Headings  -->
@@ -155,6 +160,7 @@
     <sys:String x:Key="SettingsItem_AccentColor">Couleur d'accentuation</sys:String>
     <sys:String x:Key="SettingsItem_ChangingLanguageWarning">Changer la langue entraînera le redémarrage de l'application!</sys:String>
     <sys:String x:Key="SettingsItem_DateFormat">Format de date de grille</sys:String>
+    <sys:String x:Key="SettingsItem_DisplayFont">Fonte</sys:String>
     <sys:String x:Key="SettingsItem_EditExcludeToolTip">Maj-Clic pour ouvrir le fichier avec l'application par défaut</sys:String>
     <sys:String x:Key="SettingsItem_EnableLanguageTesting">Permettre les tests linguistiques</sys:String>
     <sys:String x:Key="SettingsItem_HideExcluded">Masquer les éléments exclus</sys:String>
@@ -255,7 +261,7 @@
 <!-- A | ResultCode_Failed -->
 <!-- A | ResultCode_InProgress -->
 <!-- A | ResultCode_NotStarted -->
-<!-- A | ResultCode_ResultCode_Aborted -->
+<!-- A | ResultCode_Aborted -->
 <!-- A | ResultCode_Succeeded -->
 <!-- A | ResultCode_SucceededWithErrors -->
 <!-- U | SettingsSubHead_Language -->

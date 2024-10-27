@@ -4,6 +4,18 @@ namespace WUView.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
+    #region Properties
+    public static List<FontFamily>? FontList { get; private set; }
+    #endregion Properties
+
+    #region Constructor
+    public SettingsViewModel()
+    {
+        FontList ??= [.. Fonts.SystemFontFamilies.OrderBy(x => x.Source)];
+    }
+    #endregion Constructor
+
+    #region Relay commands
     [RelayCommand]
     private static void OpenAppFolder()
     {
@@ -13,7 +25,7 @@ public partial class SettingsViewModel : ObservableObject
             filePath = Path.Combine(AppInfo.AppDirectory, "Strings.test.xaml");
             if (File.Exists(filePath))
             {
-                _ = Process.Start("explorer.exe", string.Format("/select,\"{0}\"", filePath));
+                _ = Process.Start("explorer.exe", string.Format(CultureInfo.InvariantCulture, "/select,\"{0}\"", filePath));
             }
             else
             {
@@ -36,4 +48,5 @@ public partial class SettingsViewModel : ObservableObject
                      true).ShowDialog();
         }
     }
+    #endregion Relay commands
 }

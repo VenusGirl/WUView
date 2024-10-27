@@ -14,13 +14,15 @@
     <Product>Windows Update Viewer</Product>
     <ApplicationIcon>Images\UV.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <GenerateAssemblyFileVersionAttribute>False</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>False</GenerateAssemblyInformationalVersionAttribute>
-    <GenerateAssemblyVersionAttribute>False</GenerateAssemblyVersionAttribute>
+    <CsWinRTAotOptimizerEnabled>false</CsWinRTAotOptimizerEnabled>
   </PropertyGroup>
 
-
-
+  <!-- Analyzers -->
+  <PropertyGroup>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <AnalysisLevel>8.0</AnalysisLevel>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Content Include="Strings.test.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -28,22 +30,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\TK.png" />
+    <Resource Include="Images\InvertedUV.png" />
     <Resource Include="Images\UV.ico" />
     <Resource Include="Images\UV.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
-    <PackageReference Include="NLog" Version="5.3.2" />
-    <PackageReference Include="Octokit" Version="13.0.0" />
-    <PackageReference Include="Vanara.PInvoke.User32" Version="4.0.2" />
-    <PackageReference Include="Vanara.PInvoke.WUApi" Version="4.0.2" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.146" PrivateAssets="all" />
+    <PackageReference Include="NLog" Version="5.3.4" />
+    <PackageReference Include="Octokit" Version="13.0.1" />
+    <PackageReference Include="Vanara.PInvoke.User32" Version="4.0.4" />
+    <PackageReference Include="Vanara.PInvoke.WUApi" Version="4.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,63 +55,18 @@
   </ItemGroup>
 
   <!-- Generate BuildInfo.cs-->
-  <Target Name="BuildInfo" AfterTargets="UpdateAssemblyInfo">
-    <Message Importance="high" Text="Beginning GenBuildInfo for $(AssemblyName). Version is $(AssemblyVersion)" />
+  <Target Name="BuildInfo" AfterTargets="BeforeBuild">
+    <Message Importance="high" Text="Generating BuildInfo for $(AssemblyName)." />
     <PropertyGroup>
       <PowerShellScript>-File "$(ProjectDir)PowerShell\GenBuildInfo.ps1"</PowerShellScript>
       <Name>-assemblyName $(AssemblyName)</Name>
-      <Version>-assemblyVersion $(AssemblyVersion)</Version>
     </PropertyGroup>
-    <Exec Command="pwsh -NoProfile $(PowerShellScript) $(Name) $(Version)" />
+    <Exec Command="pwsh -NoProfile $(PowerShellScript) $(Name)" />
   </Target>
 
-  <!-- Publish to Zip file -->
-  <Target Name="PublishZip" AfterTargets="Publish">
-    <PropertyGroup>
-      <PowerShellScript>-File "V:\Source\Repos\PublishZip\PubZipEx.ps1"</PowerShellScript>
-      <Name>-name "Windows Update Viewer"</Name>
-      <Version>-version $(AssemblyVersion)</Version>
-      <Path>-path "$(ProjectDir)"</Path>
-      <PublishFolder>-pubDir $(PublishDir)</PublishFolder>
-    </PropertyGroup>
-    <!-- This is the framework dependent version -->
-    <PropertyGroup Condition="'$(PublishDir.Contains(`Framework_Dependent`))'">
-      <PubType>-pubType "x64x86"</PubType>
-    </PropertyGroup>
-    <!-- This is the x64 self contained version-->
-    <PropertyGroup Condition="'$(PublishDir.Contains(`Self_Contained_x64`))'">
-      <PubType>-pubType SC_x64</PubType>
-    </PropertyGroup>
-    <!-- This is the x86 self contained version-->
-    <PropertyGroup Condition="'$(PublishDir.Contains(`Self_Contained_x86`))'">
-      <PubType>-pubType SC_x86</PubType>
-    </PropertyGroup>
-    <!-- Execute the PowerShell script -->
-    <Exec Command="pwsh -NoProfile $(PowerShellScript) $(Name) $(Version) $(PubType) $(PublishFolder) $(Path)" />
-  </Target>
-
-  <!-- Publish to Inno Setup installer-->
-  <Target Name="CompileSetup" AfterTargets="PublishZip">
-    <PropertyGroup>
-      <PowerShellScript>-File "V:\Source\Repos\PublishInnoSetup\PubSetupEx.ps1"</PowerShellScript>
-      <ScriptName>-issScript "$(ProjectDir)Inno_Setup\WUViewEx.iss"</ScriptName>
-      <Name>-name $(AssemblyName)</Name>
-      <Version>-version $(AssemblyVersion)</Version>
-    </PropertyGroup>
-    <!-- This is the framework dependent version -->
-    <PropertyGroup Condition="'$(PublishDir.Contains(`Framework_Dependent`))'">
-      <PubType>-publishType "x64x86"</PubType>
-    </PropertyGroup>
-    <!-- This is the x64 self contained version-->
-    <PropertyGroup Condition="'$(PublishDir.Contains(`Self_Contained_x64`))'">
-      <PubType>-publishType SC_x64</PubType>
-    </PropertyGroup>
-    <!-- This is the x86 self contained version-->
-    <PropertyGroup Condition="'$(PublishDir.Contains(`Self_Contained_x86`))'">
-      <PubType>-publishType SC_x86</PubType>
-    </PropertyGroup>
-    <!-- Execute the PowerShell script -->
-    <Exec Command="pwsh -NoProfile $(PowerShellScript) $(ScriptName) $(PublishDir) $(PubType) $(version) $(Name)" />
+  <!-- Build complete message -->
+  <Target Name="VersionMessage" AfterTargets="AfterBuild">
+    <Message Importance="high" Text="Build complete for $(AssemblyName). Assembly Version is $(AssemblyVersion)." />
   </Target>
 
   <!-- Remove obj folder after Clean -->

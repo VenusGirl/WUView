@@ -8,14 +8,28 @@ namespace WUView.Views;
 public partial class MainPage : UserControl
 {
     #region MainPage Instance
-    public static MainPage? Instance { get; set; }
+    public static MainPage? Instance { get; private set; }
     #endregion MainPage Instance
 
     public MainPage()
     {
         InitializeComponent();
         Instance = this;
+
+        SetDetailsHeight();
     }
+
+    #region Set height of details pane
+    /// <summary>
+    /// Set the details pane height
+    /// </summary>
+    public void SetDetailsHeight()
+    {
+        DetailsRow.Height = !UserSettings.Setting!.ShowDetails
+            ? new GridLength(1)
+            : new GridLength(UserSettings.Setting.DetailsHeight);
+    }
+    #endregion Set height of details pane
 
     #region HResult click event
     /// <summary>
@@ -23,14 +37,14 @@ public partial class MainPage : UserControl
     /// </summary>
     private void HResult_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (hypHResult.Inlines.FirstInline is Run run)
+        if (HypHResult.Inlines.FirstInline is Run run)
         {
             try
             {
                 if (ClipboardHelper.CopyTextToClipboard(run.Text))
                 {
-                    SnackbarMsg.ClearAndQueueMessage(string.Format(
-                        GetStringResource("MsgText_HResultCopiedToClipboard"), run.Text), 3000);
+                    SnackbarMsg.ClearAndQueueMessage(string.Format(CultureInfo.InvariantCulture,
+                        MsgTextHResultCopiedToClipboard, run.Text), 3000);
                 }
             }
             catch (Exception ex)
@@ -100,10 +114,10 @@ public partial class MainPage : UserControl
     /// <param name="exit">If true, will return if filter length is 0.</param>
     public void FilterTheGrid(bool exit = false)
     {
-        string filter = tbxSearch.Text;
+        string filter = TbxSearch.Text;
 
-        ICollectionView cv = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource);
-        if (filter?.Length == 0)
+        ICollectionView cv = CollectionViewSource.GetDefaultView(DataGrid.ItemsSource);
+        if (filter.Length == 0)
         {
             cv.Filter = null;
             if (exit)
@@ -111,15 +125,15 @@ public partial class MainPage : UserControl
                 return;
             }
         }
-        else if (filter?.StartsWith('!') == true)
+        else if (filter.StartsWith('!'))
         {
             filter = filter[1..].TrimStart(' ');
             cv.Filter = o =>
             {
                 WUpdate? wu = o as WUpdate;
-                return !wu!.Title!.Contains(filter!, StringComparison.OrdinalIgnoreCase) &&
-                       !wu.ResultCode!.Contains(filter!, StringComparison.OrdinalIgnoreCase) &&
-                       !wu.KBNum!.Contains(filter!, StringComparison.OrdinalIgnoreCase);
+                return !wu!.Title!.Contains(filter, StringComparison.OrdinalIgnoreCase) &&
+                       !wu.ResultCode!.Contains(filter, StringComparison.OrdinalIgnoreCase) &&
+                       !wu.KBNum!.Contains(filter, StringComparison.OrdinalIgnoreCase);
             };
         }
         else
@@ -127,19 +141,19 @@ public partial class MainPage : UserControl
             cv.Filter = o =>
             {
                 WUpdate? wu = o as WUpdate;
-                return wu!.Title!.Contains(filter!, StringComparison.OrdinalIgnoreCase) ||
-                       wu.ResultCode!.Contains(filter!, StringComparison.OrdinalIgnoreCase) ||
-                       wu.KBNum!.Contains(filter!, StringComparison.OrdinalIgnoreCase);
+                return wu!.Title!.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                       wu.ResultCode!.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                       wu.KBNum!.Contains(filter, StringComparison.OrdinalIgnoreCase);
             };
         }
-        if (dataGrid.Items.Count == 1)
+        if (DataGrid.Items.Count == 1)
         {
             SnackbarMsg.ClearAndQueueMessage(GetStringResource("MsgText_FilterOneRowShown"), 2000);
         }
         else
         {
-            SnackbarMsg.ClearAndQueueMessage(string.Format(
-                GetStringResource("MsgText_FilterRowsShown"), dataGrid.Items.Count), 2000);
+            SnackbarMsg.ClearAndQueueMessage(string.Format(CultureInfo.InvariantCulture,
+                MsgTextFilterRowsShown, DataGrid.Items.Count), 2000);
         }
     }
     #endregion Filter the datagrid
@@ -150,11 +164,11 @@ public partial class MainPage : UserControl
     /// </summary>
     internal void ClearColumnSort()
     {
-        foreach (DataGridColumn column in dataGrid.Columns)
+        foreach (DataGridColumn column in DataGrid.Columns)
         {
             column.SortDirection = null;
         }
-        dataGrid.Items.SortDescriptions.Clear();
+        DataGrid.Items.SortDescriptions.Clear();
 
         SnackbarMsg.ClearAndQueueMessage(GetStringResource("MsgText_ColumnSortCleared"));
     }
@@ -167,31 +181,31 @@ public partial class MainPage : UserControl
     public void Copy2Clipboard(bool msg = false)
     {
         // Preserve the selected row
-        int selIndex = dataGrid.SelectedIndex;
+        int selIndex = DataGrid.SelectedIndex;
 
         // Clear the clipboard
         Clipboard.Clear();
 
         // Include the header row
-        dataGrid.ClipboardCopyMode = DataGridClipboardCopyMode.IncludeHeader;
+        DataGrid.ClipboardCopyMode = DataGridClipboardCopyMode.IncludeHeader;
 
         // Temporarily set selection mode to all rows
-        dataGrid.SelectionMode = DataGridSelectionMode.Extended;
+        DataGrid.SelectionMode = DataGridSelectionMode.Extended;
 
         // Select all the cells
-        dataGrid.SelectAllCells();
+        DataGrid.SelectAllCells();
 
         // Execute the copy
-        ApplicationCommands.Copy.Execute(null, dataGrid);
+        ApplicationCommands.Copy.Execute(null, DataGrid);
 
         // Unselect the cells
-        dataGrid.UnselectAllCells();
+        DataGrid.UnselectAllCells();
 
         // Set selection mode back to one row
-        dataGrid.SelectionMode = DataGridSelectionMode.Single;
+        DataGrid.SelectionMode = DataGridSelectionMode.Single;
 
         // re-select the previous row
-        dataGrid.SelectedIndex = selIndex;
+        DataGrid.SelectedIndex = selIndex;
 
         if (msg)
         {
@@ -207,7 +221,7 @@ public partial class MainPage : UserControl
     public void UpdateGrid()
     {
         Mouse.OverrideCursor = Cursors.Wait;
-        dataGrid.Items.Refresh();
+        DataGrid.Items.Refresh();
         Mouse.OverrideCursor = null;
     }
     #endregion Update the grid
@@ -256,7 +270,7 @@ public partial class MainPage : UserControl
     /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
     private void UserControl_Unloaded(object sender, RoutedEventArgs e)
     {
-        dataGrid.Items.Filter = null;
+        DataGrid.Items.Filter = null;
     }
     #endregion Unloaded event
 
@@ -268,7 +282,7 @@ public partial class MainPage : UserControl
     /// <param name="e"></param>
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-        SetColumnOrder(dataGrid);
+        SetColumnOrder(DataGrid);
     }
     #endregion Loaded event
 
@@ -292,9 +306,9 @@ public partial class MainPage : UserControl
     private static void SaveColumnOrder(DataGrid? grid)
     {
         UserSettings.Setting!.ColumnKB = grid!.Columns[0].DisplayIndex;
-        UserSettings.Setting!.ColumnDate = grid!.Columns[1].DisplayIndex;
-        UserSettings.Setting!.ColumnTitle = grid!.Columns[2].DisplayIndex;
-        UserSettings.Setting!.ColumnResult = grid!.Columns[3].DisplayIndex;
+        UserSettings.Setting.ColumnDate = grid.Columns[1].DisplayIndex;
+        UserSettings.Setting.ColumnTitle = grid.Columns[2].DisplayIndex;
+        UserSettings.Setting.ColumnResult = grid.Columns[3].DisplayIndex;
     }
     #endregion Save order of columns in the DataGrid
 
@@ -310,9 +324,9 @@ public partial class MainPage : UserControl
             Dictionary<int, int> columns = new()
             {
                 { UserSettings.Setting!.ColumnKB, 0 },
-                { UserSettings.Setting!.ColumnDate, 1 },
-                { UserSettings.Setting!.ColumnTitle, 2 },
-                { UserSettings.Setting!.ColumnResult, 3 }
+                { UserSettings.Setting.ColumnDate, 1 },
+                { UserSettings.Setting.ColumnTitle, 2 },
+                { UserSettings.Setting.ColumnResult, 3 }
             };
 
             foreach (KeyValuePair<int, int> pair in columns.OrderBy(k => k.Key))
